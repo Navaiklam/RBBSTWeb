@@ -3,8 +3,10 @@
 # -*- coding: utf-8 -*-
 # ReconBBSTWeb-beta 0.001
 # ReconBBST By HafdlyMalkov 
-# This is a proof of concept, an enumeration system that I am making for personal use in which I can keep track of my Hunters.
-# I am using in the backend, python and different opensource applications to create a frontend in which I can save in a different database information of interest.
+# This is a proof of concept DO NOT EXPOSE ON THE INTERNET
+# Tools for enumeration url system that I am making for personal use.
+# 
+# 
 
 from flask import Flask, make_response, render_template, request, jsonify
 from flask_cors import CORS
@@ -12,9 +14,9 @@ import json, os, string
 app = Flask(__name__)
 CORS(app)
 
-@app.route("/rupatch", methods=['GET'])
+@app.route("/", methods=['GET'])
 def rupatch():
-    return "ok"
+    return render_template("infoscope.html")
 @app.route("/api_v1", methods=['GET','POST'])
 
 def api_v1():
@@ -69,7 +71,7 @@ def api_v1():
     #        durl[nu] = linea
     #        if nu == linea:
     #            break
-    resp = make_response(render_template('rupatch.html', durl=durl, no=nu))
+    resp = make_response(render_template('rupatch.html', durl=durl, nu=nu))
     resp.headers['Cache-Control'] = 'no-cache, no-store. must-revalidate'
     resp.headers['Pragma'] = 'no-cache'
     resp.headers['Expires'] = 0
