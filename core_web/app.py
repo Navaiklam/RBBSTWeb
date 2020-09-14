@@ -69,7 +69,7 @@ def api_v1():
     #        durl[nu] = linea
     #        if nu == linea:
     #            break
-    resp = make_response(render_template('rupatch.html', durl=durl))
+    resp = make_response(render_template('rupatch.html', durl=durl, no=nu))
     resp.headers['Cache-Control'] = 'no-cache, no-store. must-revalidate'
     resp.headers['Pragma'] = 'no-cache'
     resp.headers['Expires'] = 0

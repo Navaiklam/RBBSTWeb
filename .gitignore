@@ -31,6 +31,7 @@ lib
 *.cfg
 __python__
 core_recon/gau_/gau
-core_web/static/pathdomain.json
+core_recon/github-dorks
+core_web/static/
 *.pyc
 __pycache__
