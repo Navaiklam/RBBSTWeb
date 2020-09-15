@@ -1,4 +1,9 @@
 {% extends "extends/main.html" %}
 {% block infoscope %}
     <h3>InFoScOpE</h3>
+
+    {% for i in durl.values() %}
+    <p class="card-text">{{ i }}</p>
+    {% endfor %}
+
 {% endblock %}

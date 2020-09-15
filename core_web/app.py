@@ -5,11 +5,11 @@
 # ReconBBST By HafdlyMalkov 
 # This is a proof of concept DO NOT EXPOSE ON THE INTERNET
 # Tools for enumeration url system that I am making for personal use.
-# 
-# 
-
+#
 from flask import Flask, make_response, render_template, request, jsonify
 from flask_cors import CORS
+from elasticsearch import Elasticsearch
+from tld import get_tld, get_fld
 import json, os, string
 app = Flask(__name__)
 CORS(app)
@@ -17,8 +17,8 @@ CORS(app)
 @app.route("/", methods=['GET'])
 def rupatch():
     return render_template("infoscope.html")
-@app.route("/api_v1", methods=['GET','POST'])
 
+@app.route("/api_v1", methods=['GET','POST'])
 def api_v1():
     if request.method == 'POST':
         try:
@@ -46,6 +46,7 @@ def api_v1():
             os.system(clearjson)
     
     pass
+    
     nu = 0
     durl = dict()
     path = ""
@@ -57,54 +58,50 @@ def api_v1():
         #url = entity[8:]
         #url = url.split("}")[0].split("\"")[0]
         durl[nu] = entity
-        
         print(entity)
-        
-    #nu = 0
-    #durl = dict() 
-    #filename = os.path.join(app.static_folder, 'pathdomain.json')#This Json is Output GAU
-    #with open(filename) as ie:
-    #    for linea in ie:
-    #        nu += 1
-        
-    #        print(linea)
-    #        durl[nu] = linea
-    #        if nu == linea:
-    #            break
+
     resp = make_response(render_template('rupatch.html', durl=durl, nu=nu))
     resp.headers['Cache-Control'] = 'no-cache, no-store. must-revalidate'
     resp.headers['Pragma'] = 'no-cache'
     resp.headers['Expires'] = 0
     resp.headers['Server'] = 'RUBBST'
-    
-    #du = durl
-    #print(type(du))
     return resp
 
 #limancia pura! Experimental no necesitas enviar estó sólo json envía
 @app.route("/dashboard", methods=['GET', 'POST'])
 def dashboard():
-
+    es = Elasticsearch('192.168.88.242:9200')
     nu = 0
+    na = 0
     durl = dict() 
     filename = os.path.join(app.static_folder, 'pathdomain.json')#This Json is Output GAU
     #filename = app.url_for('static', filename='patchdomain.json')
+    with open(filename) as ie:
+        for name in ie:
+            na += 1
+            nam = name[8:]
+            nam = nam.split("}")[0].split("\"")[0]
+            if na == 2:
+                nam = nam.strip()
+                naur = get_fld(nam)
+                print(naur)                
+                pass
     with open(filename) as ie:
         for linea in ie:
             nu += 1
             url = linea[8:]
             url = url.split("}")[0].split("\"")[0]
             print(linea)
-            durl[nu] = linea
+            durl[nu] = url
+            es.index(index=naur, id=nu, body={'text': url})
             if nu == linea:
+                filename.close()
                 break
-    resp = make_response(render_template('home.html', durl=durl))
+    resp = make_response(render_template('infoscope.html', durl=durl))
     resp.headers['Cache-Control'] = 'no-cache, no-store. must-revalidate'
     resp.headers['Pragma'] = 'no-cache'
-    resp.headers['Expires'] = 0
     resp.headers['Server'] = 'RUBBST'
-    
-
+    resp.headers['Expires'] = 0    
     return resp
 
 @app.route("/rupatch/api", methods=['GET'])
