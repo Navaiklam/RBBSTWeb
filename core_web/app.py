@@ -7,12 +7,12 @@
 # Tools for enumeration url system that I am making for personal use.
 #
 from flask import Flask, make_response, render_template, request, jsonify
-from flask_cors import CORS
+#from flask_cors import CORS
 from elasticsearch import Elasticsearch
 from tld import get_tld, get_fld
 import json, os, string
 app = Flask(__name__)
-CORS(app)
+#CORS(app)
 
 @app.route("/", methods=['GET'])
 def rupatch():
@@ -49,7 +49,6 @@ def api_v1():
     
     nu = 0
     durl = dict()
-    path = ""
     f = open("static/pathdomain.json", "r")
     content = f.read()
     jsondecoded = json.loads(content)
@@ -68,8 +67,8 @@ def api_v1():
     return resp
 
 #limancia pura! Experimental no necesitas enviar estó sólo json envía
-@app.route("/dashboard", methods=['GET', 'POST'])
-def dashboard():
+@app.route("/record", methods=['GET', 'POST'])
+def record():
     es = Elasticsearch('192.168.88.242:9200')
     nu = 0
     na = 0
@@ -93,9 +92,8 @@ def dashboard():
             url = url.split("}")[0].split("\"")[0]
             print(linea)
             durl[nu] = url
-            es.index(index=naur, id=nu, body={'text': url})
+            es.index(index=naur, id=nu, body={'url': url})
             if nu == linea:
-                filename.close()
                 break
     resp = make_response(render_template('infoscope.html', durl=durl))
     resp.headers['Cache-Control'] = 'no-cache, no-store. must-revalidate'
@@ -104,41 +102,17 @@ def dashboard():
     resp.headers['Expires'] = 0    
     return resp
 
-@app.route("/rupatch/api", methods=['GET'])
-def ruapi():
-   # nu = 0
-   # durl = dict()
-    #filename = os.path.join(app.static_folder, 'elisaRU.json')#This Json is Output GAU
-    #data = json.load(open(filename))
-    #with open(filename) as ie:
-     #   for linea in ie:
-      #      nu += 1
-       #     url = line
-           #url = linea[8:]
-            #url = url.split("}")[0].split("\"")[0]
-            #durl[nu] = url
-        #    if nu == 30:
-         #       break
-    #resp = make_response(render_teamplate('home.html'))
-    return render_template('home.html') #durl
+@app.route("/dashboard", methods=['GET'])
+def dashboard():
+    resp = make_response(render_template('dashboard.html'))
+    resp.headers['Cache-Control'] = 'no-cache, no-store. must-revalidate'
+    resp.headers['Access-Control-Allow-Origin:'] = '127.0.0.1'
+    resp.headers['Pragma'] = 'no-cache'
+    resp.headers['Server'] = 'RUBBST'
+    resp.headers['Expires'] = 0    
+    return resp
 
 
-
-#@app.route("/", methods="GET")
-#@app.route("/home/<bounty>", methods="POST")
-    
-#    if request.method == 'POST':    
-#           resp = make_response(render_template('home.html', bounty=bounty))
-#            resp.headers['Server'] = 'HafdlyMalkov'
-#            resp.headers['Content-encoding'] = 'compress'
-#            resp.headers['export-FLASK_ENV'] = "development"
-#            resp.headers['X-Forwarded-Host'] = '192.168.88.213'
-#            return resp  #render_template('home.html', bounty=bounty, resp)
-#    else:
-#            resp = make_response(render_template('home.html'))
-#            resp.headers['Server'] = 'HafdlyMalkov'
-#            resp.headers['Response-Type'] = 'GET'
-#            return resp
 if __name__ == "__main__":
     app.run(debug=True)
 
